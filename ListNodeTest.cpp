@@ -1,8 +1,9 @@
+#include <cmath>
 #include <iostream>
 #include <vector>
-#include <cmath>
-#include "ListNode.h"
-#include "ListNodeStream.h"
+
+#include "list/ListNode.h"
+#include "list/ListNodeStream.h"
 
 struct Apple {
     int weight;
@@ -27,7 +28,7 @@ int main(void) {
 
     std::cout << &n3 << std::endl;
 
-    LinkList l1 {1, 2, 3};
+    LinkList l1{1, 2, 3};
     std::cout << l1.GetRoot() << std::endl;
     std::cout << l1 << std::endl;
 
@@ -36,21 +37,15 @@ int main(void) {
 
     std::cout << l2 << std::endl;
 
-
-    std::vector<float> fv { 1.0, 2.34, 3.67, 9.66};
+    std::vector<float> fv{1.0, 2.34, 3.67, 9.66};
 
     struct Fun {
-        int operator()(float& val) {
-            return std::round(val);
-        }
+        int operator()(float& val) { return std::round(val); }
     };
 
     Fun f;
-    auto fun = [](float& val) {
-        return std::round(val);
-    };
+    auto fun = [](float& val) { return std::round(val); };
     Transformer<int, float> funtor = fun;
     BaseLinkList<int> l3(fv, funtor);
     std::cout << l3 << std::endl;
-
 }
