@@ -4,6 +4,7 @@
 #include <initializer_list>
 #include <vector>
 #include <stack>
+#include <functional>
 
 template <typename T>
 struct BaseListNode {
@@ -32,6 +33,10 @@ struct BaseListNode {
     }
 };
 
+template <typename OutputType, typename InputType, 
+            typename = std::enable_if_t<!std::is_void<OutputType>::value && !std::is_void<InputType>::value>>
+using Transformer = std::function<OutputType(InputType&)>;
+
 template <typename T>
 class BaseLinkList {
     public:
@@ -49,6 +54,18 @@ class BaseLinkList {
             root = tempNode.next;
         }
 
+        template <typename U>
+        BaseLinkList(std::vector<U>& initList, Transformer<T, U>& fun) {
+            Node tempNode;
+            NodePtr curPtr = &tempNode;
+            for (auto& val: initList) {
+                curPtr->next = new Node(fun(val));
+                curPtr = curPtr->next;
+            }
+
+            root = tempNode.next;
+        }
+
         BaseLinkList(std::vector<T>& v) {
             Node tempNode;
             NodePtr curPtr = &tempNode;
@@ -59,6 +76,12 @@ class BaseLinkList {
 
             root = tempNode.next;
         }
+
+        BaseLinkList(const BaseLinkList& others) = delete;
+        BaseLinkList& operator==(const BaseLinkList& others) = delete;
+
+        BaseLinkList(BaseLinkList&& others) = delete;
+        BaseLinkList& operator==(BaseLinkList&& others) = delete;
 
         ~BaseLinkList() {
             std::stack<NodePtr> ptrStack;
@@ -77,6 +100,10 @@ class BaseLinkList {
 
         NodePtr GetRoot() const {
             return root;
+        }
+
+        void Loop(std::function<bool(T)>) {
+
         }
 
     private:

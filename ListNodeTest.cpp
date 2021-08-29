@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <cmath>
 #include "ListNode.h"
 #include "ListNodeStream.h"
 
@@ -34,6 +35,22 @@ int main(void) {
     LinkList l2(v);
 
     std::cout << l2 << std::endl;
-    
+
+
+    std::vector<float> fv { 1.0, 2.34, 3.67, 9.66};
+
+    struct Fun {
+        int operator()(float& val) {
+            return std::round(val);
+        }
+    };
+
+    Fun f;
+    auto fun = [](float& val) {
+        return std::round(val);
+    };
+    Transformer<int, float> funtor = fun;
+    BaseLinkList<int> l3(fv, funtor);
+    std::cout << l3 << std::endl;
 
 }
