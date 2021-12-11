@@ -5,7 +5,7 @@
 #include <iostream>
 #include <type_traits>
 
-#include "ListNode.h"
+#include "ListNode.hxx"
 
 template <typename T, typename = decltype(std::declval<std::ostream>() << std::declval<T>())>
 std::ostream& operator<<(std::ostream& os, const BaseListNode<T>& node) {

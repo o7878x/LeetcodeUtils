@@ -1,10 +1,14 @@
-#ifndef LIST_NODE_H__
-#define LIST_NODE_H__
+#ifndef LIST_NODE_HXX__
+#define LIST_NODE_HXX__
 
 #include <functional>
 #include <initializer_list>
 #include <stack>
 #include <vector>
+
+template <typename OutputType, typename InputType,
+          typename = std::enable_if_t<!std::is_void<OutputType>::value && !std::is_void<InputType>::value>>
+using Transformer = std::function<OutputType(InputType&)>;
 
 template <typename T>
 struct BaseListNode {
@@ -14,28 +18,38 @@ struct BaseListNode {
     Value val;
     Ptr next;
 
+    // normal constructor
     BaseListNode() : BaseListNode({}, nullptr) {}
     BaseListNode(Value value) : BaseListNode(value, nullptr) {}
     BaseListNode(Value value, Ptr next) : val{value}, next{next} {}
 
-    ~BaseListNode() = default;
-
-    BaseListNode(const BaseListNode<T>& otherNode) {
-        val = otherNode.val;
-        next = otherNode.next;
+    // copy constructor
+    BaseListNode(const BaseListNode<T>& otherNode) : val{otherNode.val}, next{otherNode.next} {}
+    BaseListNode& operator=(const BaseListNode<T>& otherNode) {
+        this->val = otherNode.val;
+        this->next = otherNode.val;
     }
 
+    // move constructor
     BaseListNode(BaseListNode<T>&& otherNode) {
-        val = std::move(otherNode.val);
+        this->val = std::move(otherNode.val);
 
-        next = otherNode.next;
+        this->next = otherNode.next;
         otherNode.next = nullptr;
     }
-};
+    BaseListNode& operator=(const BaseListNode<T>&& otherNode) {
+        this->val = std::move(otherNode.val);
 
-template <typename OutputType, typename InputType,
-          typename = std::enable_if_t<!std::is_void<OutputType>::value && !std::is_void<InputType>::value>>
-using Transformer = std::function<OutputType(InputType&)>;
+        this->next = otherNode.next;
+        otherNode.next = nullptr;
+    }
+
+    // destructor
+    ~BaseListNode() = default;
+
+    // comparator
+    bool operator==(const BaseListNode<T>& otherNode) const { return val == otherNode.val; }
+};
 
 template <typename T>
 class BaseLinkList {
